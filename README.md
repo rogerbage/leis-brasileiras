@@ -46,7 +46,7 @@ from leis import DecretosPlanalto
 planalto = DecretosPlanalto('/caminho/para/arquivo.csv')
 planalto.download('')
 ```
-##### Se preferir baixar um ano especívico (consultar urls.py)
+##### Se preferir baixar um ano específico (consultar urls.py)
 
 ```from leis import DecretosPlanalto
 
