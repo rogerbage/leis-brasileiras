@@ -44,9 +44,15 @@ As leis são salvas em um arquivo .CSV com separação das colunas por '';'' e c
 from leis import DecretosPlanalto
 
 planalto = DecretosPlanalto('/caminho/para/arquivo.csv')
-planalto.download()
+planalto.download('')
 ```
+###### Se preferir baixar um ano especívico (consultar urls.py)
 
+from leis import DecretosPlanalto
+
+planalto = DecretosPlanalto('/caminho/para/arquivo.csv')
+planalto.download('1998')
+```
 ### Instalando dependências
 
 ```bash
