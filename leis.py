@@ -44,13 +44,25 @@ class Planalto:
                    }
         resp = req.get(link, headers=headers)
         content = resp.content.decode('latin-1')
-        return BeautifulSoup(content, features='lxml').find('body').text
+        Contador = 0
+        while ((BeautifulSoup(content, features='lxml').find('body').text=='\n') and (Contador < 10)):
+            resp = req.get(link, headers=headers)
+            content = resp.content.decode('latin-1')
+            Contador += 1
+
+        if (BeautifulSoup(content, features='lxml').find('body').text=='\n'):
+            print('Erro ao acessar link: '+link)
+
+        return BeautifulSoup(content, features='lxml').find('body').text #alterada
 
     def get_row_info(self, tds, year):
         try:
             link = tds[0].find_element_by_tag_name('a').get_attribute('href')
-            link = link.replace('https', 'http')
-            inteiro_teor = striphtml(self.get_content(link))
+            if (link != ''):
+                link = link.replace('https', 'http')
+                inteiro_teor = striphtml(self.get_content(link))
+            else:
+                inteiro_teor = ''
         except (NoSuchElementException, MissingSchema):
             inteiro_teor = ''
 
@@ -60,7 +72,7 @@ class Planalto:
         return info
 
     def _wait_table(self):
-        wait = WebDriverWait(self.driver, 20)
+        wait = WebDriverWait(self.driver, 2000)
         wait.until(EC.presence_of_element_located(
             (By.TAG_NAME, 'table')
             )
@@ -93,9 +105,10 @@ class Planalto:
                 row_info = self.get_row_info(tds, year)
                 writer.writerow(row_info)
 
-    def download(self):
+    def download(self, ano):
         for year, url in self.urls.items():
-            self.extract_info(year, url)
+            if ( (ano == year) or (ano == "")):
+                self.extract_info(year, url)
 
         print('Fechando Navegador Firefox')
         self.driver.close()
@@ -136,6 +149,9 @@ class LeisDelegadasPlanalto(Planalto):
         super().__init__()
         self.file_destination = file_destination
         self.tipo_lei = 'leis delegadas'
+        self.urls = {
+            'todas': 'leis-delegadas-1'
+        }
         self.header = ['lei', 'ementa', 'ano', 'inteiro_teor']
 
 
